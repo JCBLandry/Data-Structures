@@ -10,12 +10,12 @@ class LRUCache:
     order, as well as a storage dict that provides fast access
     to every node stored in the cache.
     """
+
     def __init__(self, limit=10):
         self.limit = limit
         self.size = 0
         self.order = DoublyLinkedList()
         self.storage = {}
-
 
     """
     Retrieves the value associated with the given key. Also
@@ -24,11 +24,9 @@ class LRUCache:
     Returns the value associated with the key or None if the
     key-value pair doesn't exist in the cache.
     """
+
     def get(self, key):
-        #update items if used
         if key in self.storage:
-            # update items if used
-            # find the key in order structure, and move to front
             node = self.storage[key]
             self.order.move_to_front(node)
             return node.value[1]
@@ -45,19 +43,24 @@ class LRUCache:
     want to overwrite the old value associated with the key with
     the newly-specified value.
     """
+
     def set(self, key, value):
-        # remove items that arent used
+
+        # already in storage?
         if key in self.storage:
             node = self.storage[key]
-            node.valkue = (key, value)
+            node.value = (key, value)
             self.order.move_to_front(node)
             return
 
+        # is the cache full?
         if self.size == self.limit:
+            # full? get rid of the oldest
             del self.storage[self.order.tail.value[0]]
             self.order.remove_from_tail()
             self.size -= 1
 
+        # put the new set in
         self.order.add_to_head((key, value))
         self.storage[key] = self.order.head
         self.size += 1
